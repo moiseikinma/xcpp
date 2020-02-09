@@ -6,6 +6,10 @@
 #include <string>
 #include <vector>
 
+#define TETXY std::string\
+    (vas\
+);
+
 class CommandLineOptions {
 public:
     CommandLineOptions(int argc, char* argv[])
@@ -102,12 +106,12 @@ public:
     }
 
     const Environment& environment() const noexcept { return env; }
-    const std::string& text() const noexcept { return source; }
+    const std::string& text() const noexcept { return origin; }
 
     bool read()
     {
-        std::ifstream ifs(env.getSourceFile());
-        source = std::string {
+        std::ifstream ifs(env.getSourceFile(), std::ios::binary);
+        origin = std::string {
             std::istreambuf_iterator<char> { ifs }, std::istreambuf_iterator<char> {}
         };
 
@@ -116,7 +120,7 @@ public:
 
 private:
     const Environment& env;
-    std::string source;
+    std::string origin;
 };
 
 void parse(const SourceFile& source)
@@ -125,6 +129,13 @@ void parse(const SourceFile& source)
     std::size_t text_size = source.text().length();
 
     for (std::size_t i = 0; i < text_size; ++i) {
+        //std::cout << std::hex << (int)text[i];
+
+        if (text[i] == '\\' && text[i + 1] == '\r' && text[i + 2] == '\n') {
+            ++++i;
+            continue;
+        }
+
         std::cout.put(text[i]);
     }
 }
